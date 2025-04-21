@@ -37,3 +37,9 @@ Keycloak generates JSON logs, which are processed by Logspout/Logstash and inser
 
 All observability sources (metrics, traces, logs) are aggregated/visualized 
 in the [Grafana](https://github.com/grafana/grafana).
+
+
+
+{"timestamp":"2025-04-21T15:12:01.643Z","sequence":145796,"loggerClassName":"org.jboss.logging.DelegatingBasicLogger","loggerName":"org.hibernate.internal.util.EntityPrinter","level":"DEBUG","message":"org.keycloak.models.jpa.entities.UserEntity{lastName=user1, federatedIdentities=<uninitialized>, realmId=af7d1c42-ab1d-42be-a349-21416d2e4baa, credentials=<uninitialized>, createdTimestamp=1745248321516, serviceAccountClientLink=null, enabled=true, notBefore=0, emailConstraint=user1@gmail.com, emailVerified=true, firstName=user1, requiredActions=[], federationLink=null, attributes=[], id=de3467f6-19ba-4b3d-8df0-e344d89ddcaa, email=user1@gmail.com, username=user1}","threadName":"executor-thread-14","threadId":114,"mdc":{"trace_flags":"01","trace_id":"5d6dfa5c20d19a764f3e3249bec071c9","span_id":"4e56682b1586700f"},"ndc":"","hostName":"33ec215164c5","processName":"QuarkusEntryPoint","processId":1}
+
+

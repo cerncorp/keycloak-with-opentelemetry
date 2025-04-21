@@ -19,6 +19,7 @@ services:
       dockerfile: Dockerfile-keycloak-with-opentelemetry
     ports:
       - 9464:9464
+      - 9080:8080
     environment:
       JAVA_OPTS_APPEND: "-javaagent:/tmp/opentelemetry-javaagent.jar"
       OTEL_SERVICE_NAME: keycloak
@@ -29,8 +30,10 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_METRICS_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"
-      KC_HTTP_ENABLED: "true"
+      KC_HTTP_ENABLED: "false"
       KC_PROXY: edge
+#      KC_HOSTNAME_ADMIN: http://keycloak:8080
+#      KC_HOSTNAME: http://keycloak:8080
     depends_on:
       - otel
     command:
@@ -44,8 +47,10 @@ services:
     image: jaegertracing/all-in-one:latest
     ports:
       - 16686:16686 # Jaeger UI
-      - 4317:55680  # GRPC OTLP
+#      - 4317:55680  # GRPC OTLP
       - 13133:13133 # Healthcheck
+      - 14268:14268 # Jaeger HTTP
+      - 14250:14250 # Jaeger gRPC
     environment:
       LOGSPOUT: ignore
 
@@ -82,11 +87,17 @@ services:
 
   otel:
     container_name: otel
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector-contrib:0.77.0-386
     volumes:
       - ./otel/otel-config.yaml:/etc/otel-config.yaml
     command:
       '--config=/etc/otel-config.yaml'
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+#      - "14250:14250" # Jaeger gRPC
+#      - "14268:14268" # Jaeger HTTP
+#      - "55679:55679" # zPages
     environment:
       LOGSPOUT: ignore
     depends_on:
@@ -132,7 +143,7 @@ services:
       - elasticsearch
       
   logspout:
-    image: gliderlabs/logspout:v3
+    image: gliderlabs/logspout:latest
     container_name: logspout
     command: 'udp://logstash:5044,syslog+udp://criblworker:9514?filter.name=nginx'
     environment:
